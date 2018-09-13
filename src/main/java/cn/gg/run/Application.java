@@ -4,6 +4,7 @@ import cn.gg.mybatis.configuration.Configuration;
 import cn.gg.mybatis.session.Sqlseesion;
 import cn.gg.mybatis.session.SqlseesionFactory;
 import cn.gg.mybatis.session.SqlseesionFactoryBuilder;
+import cn.gg.run.dao.User2Mapper;
 import cn.gg.run.dao.UserMapper;
 import cn.gg.run.domain.User;
 

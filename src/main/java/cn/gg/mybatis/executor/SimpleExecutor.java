@@ -4,6 +4,11 @@ import cn.gg.mybatis.configuration.Configuration;
 import cn.gg.mybatis.mapper.MapperData;
 import cn.gg.mybatis.statement.StatementHandler;
 
+/**
+ * @author GG
+ * @date 2018年09月12日15:10:25
+ * @return 简单执行
+ */
 public class SimpleExecutor implements Executor {
 
     private Configuration configuration;

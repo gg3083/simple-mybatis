@@ -8,6 +8,11 @@ import lombok.Data;
 
 import java.lang.reflect.Proxy;
 
+/**
+ * @author GG
+ * @date 2018年09月12日14:10:25
+ * @return
+ */
 @Data
 public class Sqlseesion {
 

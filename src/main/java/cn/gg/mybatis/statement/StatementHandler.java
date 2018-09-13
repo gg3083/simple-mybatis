@@ -3,13 +3,11 @@ package cn.gg.mybatis.statement;
 import cn.gg.mybatis.configuration.Configuration;
 import cn.gg.mybatis.datasource.DataSource;
 import cn.gg.mybatis.mapper.MapperData;
-import cn.gg.run.domain.User;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.*;
-import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -91,7 +89,7 @@ public class StatementHandler {
                         Field f = fields[j];
                         String cloumn = rs.getMetaData().getColumnName(i);
                         if(f.getName().equalsIgnoreCase(String.valueOf(camel(cloumn)))){
-                            String methodName = "set" + test( f.getName() ); // set方法的名字
+                            String methodName = "set" + bigFirst( f.getName() ); // set方法的名字
                             Method m =type.getMethod( methodName ,f.getType());
                             Object argsType = f.getType().getName();//m.getParameterTypes()[0].getName() ;//
                             if (argsType.equals("java.lang.Integer")) {
@@ -124,11 +122,11 @@ public class StatementHandler {
     }
 
     /**
-     * 下划线转驼峰
+     *
      * @param str
-     * @return
+     * @return 下划线转驼峰
      */
-    public static StringBuffer camel(String str) {
+    public StringBuffer camel(String str) {
         //利用正则删除下划线，把下划线后一位改成大写
         Pattern pattern = Pattern.compile("_(\\w)");
         Matcher matcher = pattern.matcher(str);
@@ -143,21 +141,16 @@ public class StatementHandler {
         return camel(sb.toString());
     }
 
-    public static String test(String str){
+    /**
+     *
+     * @param str
+     * @return 首字母大写
+     */
+    public String bigFirst(String str){
         String value = camel( str ).toString();
         String first = value.substring(0, 1);
         String tail = value.substring(1);
         return first.toUpperCase() + tail;
     }
 
-
-    public static void main(String[] args) {
-
-        String a =  new String("a");
-        System.err.println(a.getClass().getTypeName());
-        if ( a instanceof String){
-            System.err.println("INt");
-        }
-
-    }
 }

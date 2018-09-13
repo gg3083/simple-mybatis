@@ -5,6 +5,11 @@ import cn.gg.mybatis.session.Sqlseesion;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
+/**
+ * @author GG
+ * @date 2018年09月12日16:10:25
+ * @return 代理
+ */
 public class MapperPoxy implements InvocationHandler{
 
     private Sqlseesion session;
