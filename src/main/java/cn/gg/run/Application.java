@@ -4,9 +4,7 @@ import cn.gg.mybatis.configuration.Configuration;
 import cn.gg.mybatis.session.Sqlseesion;
 import cn.gg.mybatis.session.SqlseesionFactory;
 import cn.gg.mybatis.session.SqlseesionFactoryBuilder;
-import cn.gg.run.dao.User2Mapper;
 import cn.gg.run.dao.UserMapper;
-import cn.gg.run.domain.User;
 
 public class Application {
 
@@ -16,7 +14,7 @@ public class Application {
         SqlseesionFactory factory = new SqlseesionFactoryBuilder( configuration ).build();
         Sqlseesion session = factory.openSession();
         UserMapper userMapper = session.getMapper(UserMapper.class);
-        User user = userMapper.getById( 1 );
+        Integer user = userMapper.deleteById( 95 );
         System.err.println( user );
     }
 }

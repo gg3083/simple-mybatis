@@ -7,6 +7,7 @@ import cn.gg.mybatis.mapper.MapperPoxy;
 import lombok.Data;
 
 import java.lang.reflect.Proxy;
+import java.util.List;
 
 /**
  * @author GG
@@ -28,9 +29,18 @@ public class Sqlseesion {
         return (E) Proxy.newProxyInstance(this.getClass().getClassLoader() , new Class[]{clazz},new MapperPoxy( this ,clazz));
     }
 
-    public <E> E select(MapperData data ,Object args){
-        return (E)executor.query( data , args );
+    public <E> E selectOne(MapperData data ,Object args){
+        return (E) executor.query( data , args ).get(0);
     }
+
+    public <E> List<E> select(MapperData data , Object args){
+        return (List<E>) executor.query( data , args );
+    }
+
+    public Integer update(MapperData data , Object args){
+        return  executor.update( data , args );
+    }
+
 
 
 }

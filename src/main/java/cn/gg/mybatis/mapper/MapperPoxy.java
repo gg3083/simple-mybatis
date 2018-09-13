@@ -4,6 +4,7 @@ import cn.gg.mybatis.session.Sqlseesion;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * @author GG
@@ -25,7 +26,15 @@ public class MapperPoxy implements InvocationHandler{
         MapperData mapperData = session.getConfiguration().getMapperRegister().getData()
                 .get( mapperInterface.getName() + "." + method.getName() );
         if ( mapperData != null){
-            return session.select( mapperData ,args );
+            Class<?> type = method.getReturnType();
+            if (Integer.class == type){
+                return session.update( mapperData ,args );
+            }else if( List.class == type){
+                return session.select( mapperData ,args );
+            }else {
+                return session.selectOne( mapperData ,args );
+            }
+
         }
         return method.invoke(proxy,args);
     }

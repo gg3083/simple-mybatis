@@ -2,6 +2,8 @@ package cn.gg.mybatis.executor;
 
 import cn.gg.mybatis.mapper.MapperData;
 
+import java.util.List;
+
 /**
  * @author gg
  * @date 2018年09月12日14:18:03
@@ -16,7 +18,7 @@ public interface Executor {
      * @param <E>
      * @return
      */
-    <E> E query(MapperData mapperData ,Object args);
+    <E> List<E> query(MapperData mapperData , Object args);
 
     /**
      * 增删改

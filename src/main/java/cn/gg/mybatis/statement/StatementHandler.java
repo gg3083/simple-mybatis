@@ -8,6 +8,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.*;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,7 +26,7 @@ public class StatementHandler {
         this.configuration = configuration;
     }
 
-    public <E> E query(MapperData mapperData, Object args) {
+    public <E> List<E> query(MapperData mapperData, Object args) {
         Connection conn = null;
         PreparedStatement ps = null;
         try {
@@ -32,13 +34,45 @@ public class StatementHandler {
             ps = conn.prepareStatement( mapperData.getSql() );
             setParameter( ps ,args );
             ResultSet rs = ps.executeQuery();
-            return (E) setResult( rs , mapperData.getType());
+            return (List<E>) setResult( rs , mapperData.getType());
         }catch (Exception e){
             e.printStackTrace();
+        }finally {
+            try {
+                conn.close();
+                ps.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
 
+    public Integer update(MapperData mapperData, Object args) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = getConnection();
+            ps = conn.prepareStatement( mapperData.getSql() );
+            setParameter( ps ,args );
+            return ps.executeUpdate();
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            try {
+                conn.close();
+                ps.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 获取jdbc连接
+     * @return
+     */
     private Connection getConnection(){
         DataSource dataSource = configuration.getDataSource();
         Connection conn = null;
@@ -53,6 +87,11 @@ public class StatementHandler {
         return conn;
     }
 
+    /**
+     * 设置参数
+     * @param ps
+     * @param parameter
+     */
     private void setParameter( PreparedStatement ps ,Object parameter ){
         Object[] args = (Object[])parameter;
         try {
@@ -73,8 +112,16 @@ public class StatementHandler {
         }
     }
 
-    private <E> E setResult(ResultSet rs ,Class type){
+    /**
+     * 将查询值封装到对象中
+     * @param rs
+     * @param type
+     * @param <E>
+     * @return
+     */
+    private <E> List<E> setResult(ResultSet rs , Class type){
         Object obj = null;
+        List<Object> list = new LinkedList<>();
         try {
             //获取结果集的元素个数
             int count = rs.getMetaData().getColumnCount();
@@ -90,15 +137,15 @@ public class StatementHandler {
                         String cloumn = rs.getMetaData().getColumnName(i);
                         if(f.getName().equalsIgnoreCase(String.valueOf(camel(cloumn)))){
                             String methodName = "set" + bigFirst( f.getName() ); // set方法的名字
-                            Method m =type.getMethod( methodName ,f.getType());
-                            Object argsType = f.getType().getName();//m.getParameterTypes()[0].getName() ;//
-                            if (argsType.equals("java.lang.Integer")) {
+                            Method m = type.getMethod( methodName ,f.getType());
+                            Class<?> argsType = f.getType();//m.getParameterTypes()[0].getName() ;//
+                            if ( Integer.class == argsType) {
                                 m.invoke(obj, rs.getInt( cloumn ));
-                            } else if (argsType.equals("java.lang.String")) {
+                            } else if ( String.class == argsType) {
                                 m.invoke(obj, rs.getString( cloumn ));
-                            } else if (argsType.equals("java.lang.Double")) {
+                            } else if ( Double.class == argsType ) {
                                 m.invoke(obj, rs.getDouble( cloumn ));
-                            } else if (argsType.equals("java.sql.Date")) {
+                            } else if ( Date.class == argsType ) {
                                 m.invoke(obj, rs.getDate( cloumn ));
                             } else {
                                 m.invoke(obj, rs.getObject( cloumn ));
@@ -106,6 +153,7 @@ public class StatementHandler {
                         }
                     }
                 }
+                list.add( obj );
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -118,7 +166,7 @@ public class StatementHandler {
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
-        return (E)obj;
+        return (List<E>) list;
     }
 
     /**

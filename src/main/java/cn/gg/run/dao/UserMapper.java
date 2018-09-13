@@ -2,9 +2,13 @@ package cn.gg.run.dao;
 
 import cn.gg.run.domain.User;
 
+import java.util.List;
+
 public interface UserMapper {
 
     User getById(Integer id);
 
-    User getByName(String userName);
+    List<User> getByName(String userName);
+
+    Integer deleteById(Integer id);
 }
